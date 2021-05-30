@@ -1,5 +1,10 @@
 use std::fmt;
 
+/// 链表节点定义，序列化/反序列化
+///
+/// 链表节点`ListNode` 有两个字段，其一数据域`val`, 下一个节点`next`。
+/// 因链表是递归定义的结构，在编译前需要确定其大小。`next` 声明为 `Option<Box<ListNode>>`。
+/// `Box`是智能指针，其包装的数据存储在堆上。
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
@@ -8,6 +13,12 @@ pub struct ListNode {
 
 
 impl ListNode {
+    /// `new`是`ListNode`的构造方法，返回`ListNode`实例
+    /// #Example
+    /// ```
+    /// use leetcode_in_rust::datastruct::linknode::ListNode;
+    /// let root = ListNode::new(21);
+    /// ```
     #[inline]
     pub fn new(val: i32) -> Self {
         ListNode {

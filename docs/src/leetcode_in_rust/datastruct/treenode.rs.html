@@ -138,12 +138,116 @@
 <span id="135">135</span>
 <span id="136">136</span>
 <span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">rc</span>::<span class="ident">Rc</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">RefCell</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">VecDeque</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">max</span>;
 
+<span class="doccomment">/// 树节点&amp;树结构定义，序列化/反序列化，打印，遍历相关算法</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// 树节点（TreeNode）的定义。三个字段</span>
+<span class="doccomment">/// * 数据域 `val`: i32类型</span>
+<span class="doccomment">/// * 左子树 `left`：Option&lt;Rc&lt;RefCell&lt;TreeNode&gt;&gt;&gt; 类型，递归定义</span>
+<span class="doccomment">/// * 右子树 `right`: Option&lt;Rc&lt;RefCell&lt;TreeNode&gt;&gt;&gt;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// 树节点相关的算法中，入参是`Option&lt;Rc&lt;RefCell&lt;TreeNode&gt;&gt;&gt;` 类型，直接传递会发生所有权转移。</span>
+<span class="doccomment">/// 使用`clone`方法，调用的是`Rc`的`clone`方法，该方法只会增加引用计数，不会对堆内存进行深拷贝。</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TreeNode</span> {
     <span class="kw">pub</span> <span class="ident">val</span>: <span class="ident">i32</span>,
@@ -152,6 +256,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">TreeNode</span> {
+    <span class="doccomment">/// `new` 构造方法，用于初始化 `TreeNode` 实例</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use leetcode_in_rust::datastruct::treenode::TreeNode;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let root = TreeNode::new(1);</span>
+    <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">val</span>: <span class="ident">i32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">TreeNode</span> {
@@ -161,51 +273,126 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_height</span>(<span class="ident">root</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
+    <span class="doccomment">/// `get_height` 获取以节点`node`为`root`的树的树高。</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// 定义空树`empty tree`的 `height` 为`0`，单个节点的`height`为`1`</span>
+    <span class="doccomment">/// 该方法使用`DFS`递归方法实现，`node.height = 1 + max(node.left.height + node.right.height)`</span>
+    <span class="doccomment">/// 入参是`Option&lt;Rc&lt;RefCell&lt;TreeNode&gt;&gt;&gt;`，内部的`dfs`遍历使用是其引用</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use leetcode_in_rust::datastruct::treenode::TreeNode;</span>
+    <span class="doccomment">/// use std::rc::Rc;</span>
+    <span class="doccomment">/// use std::cell::RefCell;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let node = TreeNode::new(1);</span>
+    <span class="doccomment">/// let height = TreeNode::get_height(Some(Rc::new(RefCell::new(node))));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_height</span>(<span class="ident">root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
         <span class="kw">fn</span> <span class="ident">dfs</span>(<span class="ident">root</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
             <span class="kw">match</span> <span class="ident">root</span> {
                 <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
                 <span class="prelude-val">Some</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">borrow</span>();
-                    <span class="number">1</span> <span class="op">+</span> <span class="ident">max</span>(<span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">left</span>), <span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">right</span>))
+                    <span class="number">1</span> <span class="op">+</span> <span class="ident">max</span>(<span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">left</span>), <span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">right</span>))  <span class="comment">// 最后一行返回的表达式不需要分号 `;`</span>
                 }
             }
         }
         <span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="ident">root</span>)
     }
 
+    <span class="doccomment">/// `create` 方法用于将的`Option&lt;i32&gt;`枚举的向量列表构造成一颗树，`Option`的值即为`TreeNode`的`val`即树的反序列化</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// 向量的顺序是树的`BFS`层序遍历的顺序</span>
+    <span class="doccomment">/// 除了最深的一层的叶子节点之外，其他的叶子节点的左右子树，使用`None`站位。位于最后一个节点之后的`None`则需要去掉</span>
+    <span class="doccomment">/// 该方法与`literal`逆方法。后者将一棵树序列化成`Option&lt;i32&gt;`向量列表。</span>
+    <span class="doccomment">/// 实现原理借助了完全二叉树层序遍历的序号(seq) 与 数组中索引(index)的关系。</span>
+    <span class="doccomment">/// 由于有的None节点在数组中不存在，因此这个 seq 与 完全二叉树的节点 seq 有差别。但左右子树的序号与当前节点的序号关系依然成立</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use leetcode_in_rust::datastruct::treenode::TreeNode;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let nums = vec![</span>
+    <span class="doccomment">///     Some(1),</span>
+    <span class="doccomment">///     Some(2), Some(3),</span>
+    <span class="doccomment">///     Some(4), None, Some(5), Some(6),</span>
+    <span class="doccomment">///     None, Some(7), None, None, Some(8)</span>
+    <span class="doccomment">/// ];</span>
+    <span class="doccomment">/// let root = TreeNode::create(nums);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// root 的拓扑形状如下，可以使用该模块的 `print_tree` 打印树的拓扑</span>
+    <span class="doccomment">/// ```text</span>
+    <span class="doccomment">///        1</span>
+    <span class="doccomment">///    2       3</span>
+    <span class="doccomment">///  4       5   6</span>
+    <span class="doccomment">///   7         8</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// 叶子节点 2 的右子树，4的左子树 5 的左右子树都用 None 占位，叶子节点 6 的右子树在最后一个节点 8 之后，就不需要 None 占位了。</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// 树的序列化和反序列化可以参考 Leetcode [297.二叉树序列化](https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/)</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">nums</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">nums</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">nums</span>.<span class="ident">len</span>();
+        <span class="comment">// 初始化节点在数组中的索引</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">index</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="comment">// 初始化根(root)节点</span>
         <span class="kw">let</span> <span class="ident">root</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(<span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">nums</span>[<span class="number">0</span>].<span class="ident">unwrap</span>()))));
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">queue</span> <span class="op">=</span> <span class="ident">VecDeque</span>::<span class="ident">new</span>();
         <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">root</span>.<span class="ident">clone</span>());
+
         <span class="kw">while</span> <span class="op">!</span><span class="ident">queue</span>.<span class="ident">is_empty</span>() {
-            <span class="kw">let</span> <span class="ident">q_size</span> <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">len</span>();
-            <span class="kw">for</span> <span class="ident">_i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">q_size</span> {
+            <span class="kw">let</span> <span class="ident">qsize</span> <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">len</span>();
+            <span class="kw">for</span> <span class="ident">_i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">qsize</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">pop_front</span>().<span class="ident">flatten</span>() {
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">x</span>.<span class="ident">borrow_mut</span>();
+
+                    <span class="comment">// 借用完全二叉树的性质</span>
+                    <span class="comment">// `leftnode.seq = 2 * curnode.seq + 1`</span>
+                    <span class="comment">// `rightnode.seq = 2 * curnode.seq + 2`</span>
                     <span class="kw">let</span> <span class="ident">lseq</span> <span class="op">=</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">index</span> <span class="op">+</span> <span class="number">1</span>;
                     <span class="kw">let</span> <span class="ident">rseq</span> <span class="op">=</span> <span class="number">2</span> <span class="op">*</span> <span class="ident">index</span> <span class="op">+</span> <span class="number">2</span>;
+                    <span class="comment">// 构造左子树</span>
                     <span class="kw">if</span> <span class="ident">lseq</span> <span class="op">&lt;</span> <span class="ident">size</span> <span class="op">&amp;&amp;</span> <span class="ident">nums</span>[<span class="ident">lseq</span>].<span class="ident">is_some</span>() {
                         <span class="ident">node</span>.<span class="ident">left</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(<span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">nums</span>[<span class="ident">lseq</span>].<span class="ident">unwrap</span>()))));
                         <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">node</span>.<span class="ident">left</span>.<span class="ident">clone</span>());
                     }
-
+                    <span class="comment">// 构造右子树</span>
                     <span class="kw">if</span> <span class="ident">rseq</span> <span class="op">&lt;</span> <span class="ident">size</span> <span class="op">&amp;&amp;</span> <span class="ident">nums</span>[<span class="ident">rseq</span>].<span class="ident">is_some</span>() {
                         <span class="ident">node</span>.<span class="ident">right</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(<span class="self">Self</span>::<span class="ident">new</span>(<span class="ident">nums</span>[<span class="ident">rseq</span>].<span class="ident">unwrap</span>()))));
                         <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">node</span>.<span class="ident">right</span>.<span class="ident">clone</span>());
                     }
                 }
+                <span class="comment">// 增加序号</span>
                 <span class="ident">index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             }
         }
         <span class="ident">root</span>
     }
 
+    <span class="doccomment">/// `literal` 是将一颗二叉树序列化成`Option&lt;i32&gt;`向量列表。是`create`方法的逆方法。</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// 其原理是使用二叉树的`BFS`层序遍历依次解析节点。</span>
+    <span class="doccomment">/// 从树根开始遍历，如果当前节点不存在，直接放入输出`None`进行占位。如果节点存在，则将其值输出到结果。</span>
+    <span class="doccomment">/// 遍历完成之后，再剔除最后一个节点之后的`None`值。</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use leetcode_in_rust::datastruct::treenode::TreeNode;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let nums = vec![</span>
+    <span class="doccomment">///     Some(1),Some(2), Some(3),Some(4), None, Some(5), Some(6),None, Some(7), None, None, Some(8),</span>
+    <span class="doccomment">/// ];</span>
+    <span class="doccomment">/// let root = TreeNode::create(nums.clone());</span>
+    <span class="doccomment">/// let ans = TreeNode::literal(root);</span>
+    <span class="doccomment">/// assert_eq!(nums, ans);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">literal</span>(<span class="ident">root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">root</span>.<span class="ident">is_none</span>() {
             <span class="kw">return</span> <span class="macro">vec</span><span class="macro">!</span>[];
@@ -217,15 +404,18 @@
             <span class="kw">let</span> <span class="ident">qsize</span> <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">len</span>();
             <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">qsize</span> {
                 <span class="kw">match</span> <span class="ident">queue</span>.<span class="ident">pop_front</span>().<span class="ident">flatten</span>() {
+                    <span class="comment">// 当前节点有值，输出结果值，左右子树进队</span>
                     <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="ident">ans</span>.<span class="ident">push</span>(<span class="prelude-val">Some</span>(<span class="ident">x</span>.<span class="ident">borrow</span>().<span class="ident">val</span>));
                         <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">x</span>.<span class="ident">borrow</span>().<span class="ident">left</span>.<span class="ident">clone</span>());
                         <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">x</span>.<span class="ident">borrow</span>().<span class="ident">right</span>.<span class="ident">clone</span>());
                     }
+                    <span class="comment">// 当前结果None，输出None</span>
                     <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ans</span>.<span class="ident">push</span>(<span class="prelude-val">None</span>),
                 }
             }
         }
+        <span class="comment">// 剔除最后一个节点之后的 None 值</span>
         <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">ans</span>.<span class="ident">len</span>();
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> (<span class="number">0</span>..<span class="ident">size</span>).<span class="ident">rev</span>() {
             <span class="kw">if</span> <span class="ident">ans</span>[<span class="ident">i</span>].<span class="ident">is_none</span>() {
@@ -238,11 +428,31 @@
     }
 }
 
+<span class="doccomment">/// `print_tree` 函数用于打印二叉树的树形拓扑，方便直观的观察一棵树的形状。便于验证相关树算法。</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// 拓扑结果中，并没有画出路径，由于控制台输出长度的限制，树的节点数也有限制。树的宽度 `width = (1&lt;&lt;height) - 1`，不能太大。</span>
+<span class="doccomment">/// 函数使用了`DFS`方式遍历一棵树。</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use leetcode_in_rust::datastruct::treenode::{TreeNode, print_tree};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let nums = vec![Some(1), Some(2), Some(3), Some(4), None, Some(5), Some(6), None, Some(7), None, None, Some(8)];</span>
+<span class="doccomment">/// let root = TreeNode::create(nums);</span>
+<span class="doccomment">/// println!(&quot;{}&quot;, print_tree(root));</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// root 的拓扑形状如下</span>
+<span class="doccomment">///        1</span>
+<span class="doccomment">///    2       3</span>
+<span class="doccomment">///  4       5   6</span>
+<span class="doccomment">///   7         8</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///  叶子节点 2 的右子树，4的左子树 5 的左右子树都用 None 占位，叶子节点 6 的右子树在最后一个节点 8 之后，就不需要 None 占位了。</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">print_tree</span>(<span class="ident">root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="ident">TreeNode</span>::<span class="ident">get_height</span>(<span class="kw-2">&amp;</span><span class="ident">root</span>);
+    <span class="kw">let</span> <span class="ident">height</span> <span class="op">=</span> <span class="ident">TreeNode</span>::<span class="ident">get_height</span>(<span class="ident">root</span>.<span class="ident">clone</span>());
     <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> (<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">height</span>) <span class="op">-</span> <span class="number">1</span>;
-
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ans</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot; &quot;</span>.<span class="ident">to_string</span>(); <span class="ident">width</span> <span class="kw">as</span> <span class="ident">usize</span>]; <span class="ident">height</span> <span class="kw">as</span> <span class="ident">usize</span>];
+
     <span class="kw">fn</span> <span class="ident">dfs</span>(<span class="ident">ans</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">deep</span>: <span class="ident">usize</span>, <span class="ident">lo</span>: <span class="ident">usize</span>, <span class="ident">hi</span>: <span class="ident">usize</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">x</span>) <span class="op">=</span> <span class="ident">node</span> {
             <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">x</span>.<span class="ident">borrow</span>();
@@ -252,29 +462,10 @@
             <span class="ident">dfs</span>(<span class="ident">ans</span>, <span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">right</span>, <span class="ident">deep</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">mid</span> <span class="op">+</span> <span class="number">1</span>, <span class="ident">hi</span>);
         }
     }
-
-    <span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ans</span>, <span class="kw-2">&amp;</span><span class="ident">root</span>, <span class="number">0usize</span>, <span class="number">0usize</span>, <span class="ident">width</span> <span class="kw">as</span> <span class="ident">usize</span>);
+    <span class="ident">dfs</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ans</span>, <span class="kw-2">&amp;</span><span class="ident">root</span>.<span class="ident">clone</span>(), <span class="number">0usize</span>, <span class="number">0usize</span>, <span class="ident">width</span> <span class="kw">as</span> <span class="ident">usize</span>);
     <span class="ident">ans</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">concat</span>()).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">level_order</span>(<span class="ident">root</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">TreeNode</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">queue</span> <span class="op">=</span> <span class="ident">VecDeque</span>::<span class="ident">new</span>();
-    <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="ident">root</span>);
-    <span class="kw">while</span> <span class="op">!</span><span class="ident">queue</span>.<span class="ident">is_empty</span>() {
-        <span class="kw">let</span> <span class="ident">size</span> <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">len</span>();
-        <span class="kw">for</span> <span class="ident">_i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">size</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">node</span>) <span class="op">=</span> <span class="ident">queue</span>.<span class="ident">pop_front</span>().<span class="ident">flatten</span>() {
-                <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">borrow</span>();
-                <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">node</span>.<span class="ident">val</span>);
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">left</span>) <span class="op">=</span> <span class="ident">node</span>.<span class="ident">left</span> {
-                    <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="prelude-val">Some</span>(<span class="ident">left</span>.<span class="ident">clone</span>()));
-                }
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">right</span>) <span class="op">=</span> <span class="ident">node</span>.<span class="ident">right</span> {
-                    <span class="ident">queue</span>.<span class="ident">push_back</span>(<span class="prelude-val">Some</span>(<span class="ident">right</span>.<span class="ident">clone</span>()));
-                }
-            }
-        }
-    }
-}</pre></div>
+</pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="leetcode_in_rust"></div>
     <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

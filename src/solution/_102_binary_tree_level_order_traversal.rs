@@ -8,30 +8,25 @@ pub struct Solution {}
 
 impl Solution {
     pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
-        if root.is_none() {
-            return vec![];
-        }
         let mut ans = vec![];
+
         let mut queue = VecDeque::new();
         queue.push_back(root);
+
         while !queue.is_empty() {
             let size = queue.len();
             let mut level = vec![];
-            for _i in 0..size {
-                if let Some(ref node) = queue.pop_front().flatten() {
-                    let node = node.borrow();
-
+            for _ in 0..size {
+                if let Some(x) = queue.pop_front().flatten() {
+                    let node = x.borrow();
                     level.push(node.val);
-
-                    if let Some(ref left) = node.left {
-                        queue.push_back(Some(Rc::clone(left)))
-                    }
-                    if let Some(ref right) = node.right {
-                        queue.push_back(Some(Rc::clone(right)))
-                    }
+                    queue.push_back(node.left.clone());
+                    queue.push_back(node.right.clone());
                 }
             }
-            ans.push(level);
+            if !level.is_empty() {
+                ans.push(level);
+            }
         }
         ans
     }

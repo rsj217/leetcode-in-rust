@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["print_tree","`print_tree` 函数用于打印二叉树的树形拓扑，方便直观的观察一棵树的形状。便于验证相关树算法。"]],"struct":[["TreeNode","树节点&树结构定义，序列化/反序列化，打印，遍历相关算法"]]});

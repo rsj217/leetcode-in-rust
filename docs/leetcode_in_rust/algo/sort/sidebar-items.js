@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["helper",""],["insert_sort",""],["merge_sort",""],["quick_sort",""],["select_sort",""]]});

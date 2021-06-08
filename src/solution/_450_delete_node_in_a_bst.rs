@@ -10,44 +10,48 @@ impl Solution {
     }
 
     pub fn delete_node_dfs(node: Option<Rc<RefCell<TreeNode>>>, key: i32) -> Option<Rc<RefCell<TreeNode>>> {
-        if node.is_none() {
-            return node;
-        }
-
-        let x = node.unwrap();
-        if key < x.borrow().val {
-            let lnode = Solution::delete_node_dfs(x.borrow().left.clone(), key);
-            x.borrow_mut().left = lnode;
-            return Some(x.clone());
-        } else if x.borrow().val < key {
-            let rnode = Solution::delete_node_dfs(x.borrow().right.clone(), key);
-            x.borrow_mut().right = rnode;
-            return Some(x.clone());
-        } else { // val == key
-            if x.borrow().left.is_none() {
-                return x.borrow().right.clone();
+        let root = match node {
+            None => None,
+            Some(x) => {
+                if key < x.borrow().val {
+                    let lnode = Solution::delete_node_dfs(x.borrow().left.clone(), key);
+                    x.borrow_mut().left = lnode;
+                    Some(x)
+                } else if x.borrow().val < key {
+                    let rnode = Solution::delete_node_dfs(x.borrow().right.clone(), key);
+                    x.borrow_mut().right = rnode;
+                    Some(x)
+                } else {
+                    if x.borrow().left.is_some() && x.borrow().right.is_some() {
+                        let successor = Solution::minimum_dfs(x.borrow().right.clone());
+                        let successor = successor.unwrap();
+                        let rnode = Solution::delete_node_dfs(x.borrow().right.clone(), successor.borrow().val);
+                        successor.borrow_mut().right = rnode;
+                        successor.borrow_mut().left = x.borrow().left.to_owned();
+                        Some(successor)
+                    } else if x.borrow().left.is_some() {
+                        x.borrow().left.clone()
+                    } else if x.borrow().right.is_some() {
+                        x.borrow().right.clone()
+                    } else {
+                        None
+                    }
+                }
             }
-            if x.borrow().right.is_none() {
-                return x.borrow().left.clone();
-            }
-            // 当前节点的左右子树一定存在，返回的最小值 successor 也一定存在
-            let successor = Solution::minimum(x.borrow().right.clone());
-            let successor = successor.unwrap();
-            let rnode = Solution::delete_node_dfs(x.borrow().right.clone(), successor.borrow().val);
-            successor.borrow_mut().right = rnode;
-            let lnode = x.borrow().left.clone();
-            successor.borrow_mut().left = lnode;
-            return Some(successor);
-        }
+        };
+        root
     }
 
-    pub fn minimum(node: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
-        assert!(node.is_some(), "node err");
-        let x = node.as_ref().unwrap();
-        if x.borrow().left.is_none() {
-            return Some(x.clone());
+    pub fn minimum_dfs(node: Option<Rc<RefCell<TreeNode>>>) -> Option<Rc<RefCell<TreeNode>>> {
+        match node {
+            None => None,
+            Some(x) => {
+                if x.borrow().left.is_none() {
+                    return Some(x);
+                }
+                Solution::minimum_dfs(x.borrow().left.to_owned())
+            }
         }
-        Solution::minimum(x.borrow().left.clone())
     }
 }
 

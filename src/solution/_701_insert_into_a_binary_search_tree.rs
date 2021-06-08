@@ -55,21 +55,16 @@ impl Solution {
 
     pub fn insert_dfs(node: Option<Rc<RefCell<TreeNode>>>, val: i32) -> Option<Rc<RefCell<TreeNode>>> {
         match node {
-            None => {
-                Some(Rc::new(RefCell::new(TreeNode::new(val))))
-            }
+            None => Some(Rc::new(RefCell::new(TreeNode::new(val)))),
             Some(x) => {
                 if val < x.borrow().val {
                     let lnode = Solution::insert_dfs(x.borrow().left.clone(), val);
                     x.borrow_mut().left = lnode;
-                    Some(x.clone())
                 } else if x.borrow().val < val {
                     let rnode = Solution::insert_dfs(x.borrow().right.clone(), val);
                     x.borrow_mut().right = rnode;
-                    Some(x.clone())
-                } else {
-                    Some(x.clone())
                 }
+                Some(x)
             }
         }
     }

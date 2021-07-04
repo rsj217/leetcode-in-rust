@@ -1,4 +1,4 @@
-use crate::datastruct::treenode::TreeNode;
+use crate::datastruct::bin_treenode::TreeNode;
 use rand::Rng;
 
 /// 验证二叉搜索树

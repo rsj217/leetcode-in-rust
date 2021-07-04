@@ -1,4 +1,4 @@
-use crate::datastruct::treenode::TreeNode;
+use crate::datastruct::bin_treenode::TreeNode;
 
 pub struct Solution {}
 

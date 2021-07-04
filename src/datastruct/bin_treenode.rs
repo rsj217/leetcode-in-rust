@@ -24,7 +24,7 @@ impl TreeNode {
     ///
     /// # Example
     /// ```
-    /// use leetcode_in_rust::datastruct::treenode::TreeNode;
+    /// use leetcode_in_rust::datastruct::bin_treenode::TreeNode;
     ///
     /// let root = TreeNode::new(1);
     /// ```
@@ -46,7 +46,7 @@ impl TreeNode {
     /// # Example
     ///
     /// ```
-    /// use leetcode_in_rust::datastruct::treenode::TreeNode;
+    /// use leetcode_in_rust::datastruct::bin_treenode::TreeNode;
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -76,7 +76,7 @@ impl TreeNode {
     ///
     /// # Example
     /// ```
-    /// use leetcode_in_rust::datastruct::treenode::TreeNode;
+    /// use leetcode_in_rust::datastruct::bin_treenode::TreeNode;
     ///
     /// let nums = vec![
     ///     Some(1),
@@ -148,7 +148,7 @@ impl TreeNode {
     /// # Example
     ///
     /// ```
-    /// use leetcode_in_rust::datastruct::treenode::TreeNode;
+    /// use leetcode_in_rust::datastruct::bin_treenode::TreeNode;
     ///
     /// let nums = vec![
     ///     Some(1),Some(2), Some(3),Some(4), None, Some(5), Some(6),None, Some(7), None, None, Some(8),
@@ -199,7 +199,7 @@ impl TreeNode {
 ///
 /// # Example
 /// ```
-/// use leetcode_in_rust::datastruct::treenode::{TreeNode, print_tree};
+/// use leetcode_in_rust::datastruct::bin_treenode::{TreeNode, print_tree};
 ///
 /// let nums = vec![Some(1), Some(2), Some(3), Some(4), None, Some(5), Some(6), None, Some(7), None, None, Some(8)];
 /// let root = TreeNode::create(nums);

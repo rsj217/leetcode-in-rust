@@ -16,6 +16,7 @@ use std::cmp::max;
 /// * 键值 `key`: i32类型 用于比较
 /// * 左子树 `left`：Option<Rc<RefCell<BSTreeNode>>> 类型，递归定义
 /// * 右子树 `right`: Option<Rc<RefCell<BSTreeNode>>>
+///
 #[derive(Debug, PartialEq, Eq)]
 pub struct BSTreeNode {
     pub key: i32,
@@ -40,6 +41,27 @@ impl BSTreeNode {
             left: None,
             right: None,
         }
+    }
+
+    /// `is_bst`: 验证`node`为根的二叉树是否是二分搜索树
+    ///
+    /// leetcode [98. 验证二分搜索树](https:leetcode-cn.com/problems/validate-binary-search-tree)
+    ///
+    pub fn is_bst(node: Option<Rc<RefCell<BSTreeNode>>>) -> bool {
+        fn _dfs(node: &Option<Rc<RefCell<BSTreeNode>>>, lval: i64, rval: i64) -> bool {
+            match node {
+                None => true,
+                Some(x) => {
+                    let val = x.borrow().key as i64;
+                    if lval < val && val < rval {
+                        _dfs(&x.borrow().left, lval, val) && _dfs(&x.borrow().right, val, rval)
+                    } else {
+                        false
+                    }
+                }
+            }
+        }
+        _dfs(&node, i64::MIN, i64::MAX)
     }
 
     /// `search_dfs` 是二分搜索树的查找算法。
@@ -86,7 +108,8 @@ impl BSTreeNode {
         }
     }
 
-    /// `insert_dfs` 是二分搜索树的插入方法。
+    /// `insert_dfs`:以`node`为根的二分搜索树插入方法。leetcode [701.二叉搜索树插入](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
+    ///
     /// 以`node`为根的二分搜索树插入`key`。如果`key`已存在，则什么也不做（如果设计了val字段，此时可以更新val字段）.
     /// 该方法使用DFS递归实现，与`search_dfs`方法类似。比较`key`和当前`node.key`, 再分别递归左右子树进行插入操作。
     /// 该方法返回插入节点后的子树的根，因此返回上次递归调用的时候，上层的`node`节点需要拼接递归调用返回的子树的根节点。
@@ -144,7 +167,8 @@ impl BSTreeNode {
         }
     }
 
-    /// `delete_dfs` 方法是删除二叉树指定的节点。
+    /// `delete_dfs`:以`node`为根的二叉搜索树删除节点算法。Leetcode [450. 二叉搜索树删除节点](https://leetcode-cn.com/problems/delete-node-in-a-bst/)
+    ///
     /// 即以`node`为根的二分搜索树删除`key`节点。
     /// 该方法同样适用`DFS`递归实现。
     /// 被删除的`key`节点有三种情况：
@@ -207,20 +231,6 @@ impl BSTreeNode {
     }
 }
 
-pub fn is_bst_valid(node: &Option<Rc<RefCell<BSTreeNode>>>) -> bool {
-    let mut nums: Vec<i32> = vec![];
-
-    fn order_dfs(node: &Option<Rc<RefCell<BSTreeNode>>>, nums: &mut Vec<i32>) {
-        if let Some(x) = node {
-            order_dfs(&x.borrow().left, nums);
-            nums.push(x.borrow().key);
-            order_dfs(&x.borrow().right, nums);
-        }
-    }
-    order_dfs(node, &mut nums);
-    crate::algo::sort::helper::is_sorted(nums)
-}
-
 fn print_tree(root: Option<Rc<RefCell<BSTreeNode>>>) -> String {
     let height = BSTreeNode::get_height(root.clone());
     let width = (1 << height) - 1;
@@ -253,7 +263,7 @@ mod tests {
         for i in nums {
             root = BSTreeNode::insert_dfs(root, i);
         }
-        assert!(is_bst_valid(&root));
+        assert!(BSTreeNode::is_bst(root.clone()));
         println!("{}", print_tree(root));
         println!("{}", "=".repeat(20));
     }
@@ -289,7 +299,7 @@ mod tests {
 
         println!("delete 1");
         root = BSTreeNode::delete_dfs(root, 1);
-        assert!(is_bst_valid(&root));
+        assert!(BSTreeNode::is_bst(root.clone()));
         println!("{}", print_tree(root));
         println!("{}", "=".repeat(20));
     }
@@ -308,7 +318,7 @@ mod tests {
 
         println!("delete 4");
         root = BSTreeNode::delete_dfs(root, 4);
-        assert!(is_bst_valid(&root));
+        assert!(BSTreeNode::is_bst(root.clone()));
         println!("{}", print_tree(root));
         println!("{}", "=".repeat(20));
     }
@@ -327,7 +337,7 @@ mod tests {
 
         println!("delete 2");
         root = BSTreeNode::delete_dfs(root, 2);
-        assert!(is_bst_valid(&root));
+        assert!(BSTreeNode::is_bst(root.clone()));
         println!("{}", print_tree(root));
         println!("{}", "=".repeat(20));
     }

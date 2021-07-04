@@ -2,7 +2,13 @@ use std::rc::Rc;
 use std::cell::RefCell;
 use std::cmp::max;
 
-/// 树节点&树结构定义，序列化/反序列化，打印，遍历相关算法
+/// AVL树节点定义，搜索(search), 插入(insert), 删除(delete) 算法
+///
+/// AVL树是平衡树的一种，平衡树是基于二分搜索树。搜索，插入，删除算法也是基于二分搜索树的算法。
+/// 不同在于，平衡树要求左右子树的高度的绝对值不能大于1。这样的做法是避免二分搜索树过于偏向某一测从而退化成链表。
+///
+/// 平衡树判定平衡的重要属性是高度，因此节点存储了高度属性。
+///
 ///
 /// 树节点（AVLTreeNode）的定义。三个字段
 /// * 数据域 `val`: i32类型
@@ -18,6 +24,7 @@ pub struct AVLTreeNode {
     pub right: Option<Rc<RefCell<AVLTreeNode>>>,
 }
 
+/// 相关算法实现，Test Case 点击 src 查看源码
 impl AVLTreeNode {
     #[inline]
     pub fn new(key: i32) -> Self {
@@ -79,7 +86,7 @@ impl AVLTreeNode {
             None => true,
             Some(x) => {
                 let bf = AVLTreeNode::get_bf(Some(x.clone()));
-                if bf < -1 || bf > 1 {
+                if bf.abs() > 1 {
                     false
                 } else {
                     AVLTreeNode::is_balance(x.borrow().left.clone()) && AVLTreeNode::is_balance(x.borrow().right.clone())
@@ -88,9 +95,25 @@ impl AVLTreeNode {
         }
     }
 
-    /// TODO
+    /// `is_bst`: 验证`node`为根的二叉树是否是二分搜索树
+    ///
+    /// leetcode [98. 验证二分搜索树](https:leetcode-cn.com/problems/validate-binary-search-tree)
+    ///
     pub fn is_bst(node: Option<Rc<RefCell<AVLTreeNode>>>) -> bool {
-        true
+        fn _dfs(node: &Option<Rc<RefCell<AVLTreeNode>>>, lval: i64, rval: i64) -> bool {
+            match node {
+                None => true,
+                Some(x) => {
+                    let val = x.borrow().key as i64;
+                    if lval < val && val < rval {
+                        _dfs(&x.borrow().left, lval, val) && _dfs(&x.borrow().right, val, rval)
+                    } else {
+                        false
+                    }
+                }
+            }
+        }
+        _dfs(&node, i64::MIN, i64::MAX)
     }
     /// `update_height`:更新节点的高度方法，根据节点的左右子树计算高度，返回更新后的节点。
     pub fn update_height(node: Option<Rc<RefCell<AVLTreeNode>>>) -> Option<Rc<RefCell<AVLTreeNode>>> {
@@ -334,6 +357,13 @@ fn print_tree(root: Option<Rc<RefCell<AVLTreeNode>>>) -> String {
 mod tests {
     use super::*;
 
+    /// ```text
+    ///     3                            2
+    ///      \                          / \
+    ///       2    left_rotate(3) ->   1   3
+    ///        \
+    ///         1
+    /// ```
     #[test]
     fn test_left_rotate() {
         println!("test_left_rotate");
@@ -361,7 +391,13 @@ mod tests {
         println!("{}", print_tree(root.clone()));
     }
 
-
+    /// ```text
+    ///     3                            2
+    ///    /                            / \
+    ///   2       right_rotate(3) ->   1   3
+    ///  /
+    /// 1
+    /// ```
     #[test]
     fn test_right_rotate() {
         println!("test_right_rotate");
@@ -520,6 +556,13 @@ mod tests {
         println!("{}", print_tree(root.clone()));
     }
 
+    /// ```text
+    ///     3                            2
+    ///    /                            / \
+    ///   2       right_rotate(3) ->   1   3
+    ///  /
+    /// 1
+    /// ```
     #[test]
     fn test_insert_left_left() {
         println!("test_insert_left_left");
@@ -533,6 +576,13 @@ mod tests {
         assert!(AVLTreeNode::is_balance(root.clone()));
     }
 
+    /// ```text
+    ///      3                            3                            2
+    ///     /                            /                            / \
+    ///    1     left_rotate(1) ->      2       right_rotate(3) ->   1   3
+    ///     \                          /
+    ///      2                        1
+    /// ```
     #[test]
     fn test_insert_left_right() {
         println!("test_insert_left_right");
@@ -546,6 +596,13 @@ mod tests {
         assert!(AVLTreeNode::is_balance(root.clone()));
     }
 
+    /// ```text
+    ///     3                            2
+    ///      \                          / \
+    ///       2    left_rotate(3) ->   1   3
+    ///        \
+    ///         1
+    /// ```
     #[test]
     fn test_insert_right_right() {
         println!("test_insert_right_right");
@@ -559,6 +616,13 @@ mod tests {
         assert!(AVLTreeNode::is_balance(root.clone()));
     }
 
+    /// ```text
+    ///         3                         3                            2
+    ///          \                         \                          / \
+    ///           2  right_rotate(2) ->     2    left_rotate(3) ->   1   3
+    ///          /                           \
+    ///         1                             1
+    /// ```
     #[test]
     fn test_insert_right_left() {
         println!("test_insert_right_left");
@@ -580,10 +644,10 @@ mod tests {
     ///    1                     1
     /// ```
     #[test]
-    fn test_delete_left_left(){
+    fn test_delete_left_left() {
         let nums = vec![2, 4, 1];
         let root = Some(Rc::new(RefCell::new(AVLTreeNode::new(3))));
-        for i in nums{
+        for i in nums {
             AVLTreeNode::insert_dfs(root.clone(), i);
         }
         println!("{}", print_tree(root.clone()));
@@ -615,6 +679,7 @@ mod tests {
         assert!(AVLTreeNode::is_bst(root.clone()));
         assert!(AVLTreeNode::is_balance(root.clone()));
     }
+
 
     /// ```text
     ///        2                     2                         3

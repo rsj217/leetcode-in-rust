@@ -9,6 +9,8 @@ pub mod _12_integer_to_roman;
 pub mod _13_roman_to_integer;
 pub mod _14_longest_common_prefix;
 pub mod _15_3sum;
+pub mod _26_remove_duplicates_from_sorted_array;
+pub mod _27_remove_element;
 pub mod _33_search_in_rotated_sorted_array;
 pub mod _35_search_insert_position;
 pub mod _46_permutations;

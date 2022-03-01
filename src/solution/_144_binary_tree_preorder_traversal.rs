@@ -1,6 +1,6 @@
 #![allow(unused_variables)]
 
-use crate::datastruct::bin_treenode::TreeNode;
+use crate::datastruct::treenode::TreeNode;
 use std::rc::Rc;
 use std::cell::RefCell;
 

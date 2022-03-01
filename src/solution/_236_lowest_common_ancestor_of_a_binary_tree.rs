@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::datastruct::bin_treenode::TreeNode;
+use crate::datastruct::treenode::TreeNode;
 
 pub struct Solution {}
 

@@ -2,7 +2,7 @@
 
 use std::cell::{Ref, RefCell};
 use std::rc::Rc;
-use leetcode_in_rust::datastruct::bin_treenode::{print_tree, TreeNode};
+use leetcode_in_rust::datastruct::treenode::{print_tree, TreeNode};
 
 
 fn dfs(root: &Option<Rc<RefCell<TreeNode>>>) {

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 use std::cell::RefCell;
-use crate::datastruct::bin_treenode::TreeNode;
+use crate::datastruct::treenode::TreeNode;
 
 /// [Problem](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
 /// ---------------------------------------------------------------------------------
